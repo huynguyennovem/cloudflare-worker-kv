@@ -1,0 +1,23 @@
+{
+  "name": "cloudflare-worker-kv-config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Worker serving remote config from Workers KV for the cloudflare_worker_kv Flutter package.",
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "config:push": "node scripts/push-config.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@cloudflare/workers-types": "^5.20260924.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11",
+    "wrangler": "^4.137.0"
+  },
+  "overrides": {
+    "sharp": "^0.35.4"
+  }
+}

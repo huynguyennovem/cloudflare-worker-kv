@@ -1,0 +1,4 @@
+node_modules/
+.wrangler/
+# Local copies of real config (e.g. pulled with `wrangler kv key get --remote`).
+*.local.json

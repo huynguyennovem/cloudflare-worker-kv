@@ -1,0 +1,32 @@
+name: cloudflare_worker_kv
+description: >-
+  Remote config for Flutter backed by Cloudflare Workers KV: in-app defaults,
+  fetch and activate, typed getters and an offline cache.
+version: 0.1.0
+repository: https://github.com/huynguyennovem/cloudflare-worker-kv-flutter/tree/main/flutter
+issue_tracker: https://github.com/huynguyennovem/cloudflare-worker-kv-flutter/issues
+topics:
+  - remote-config
+  - cloudflare
+  - feature-flags
+  - configuration
+screenshots:
+  - description: The example app fetching and activating a new config from Cloudflare Workers KV.
+    path: doc/demo.gif
+
+environment:
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+  meta: ^1.15.0
+  shared_preferences: ^2.3.0
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  shared_preferences_platform_interface: ^2.4.0
+  flutter_test:
+    sdk: flutter

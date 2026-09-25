@@ -1,0 +1,28 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+.claude/
+# Private notes, not part of the repository.
+/docs/
+/wip-ai-converstation/
+# Module-specific rules live in flutter/.gitignore and worker/.gitignore.

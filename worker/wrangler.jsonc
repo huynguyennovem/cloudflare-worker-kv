@@ -1,0 +1,21 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "cloudflare-worker-kv-config",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-08-01",
+	"observability": {
+		"enabled": true
+	},
+	"kv_namespaces": [
+		{
+			"binding": "CONFIG_KV",
+			"id": "e44eacf4979b42119db3b7abbacdd025"
+		}
+	],
+	// The namespace keeps the whole config as one JSON object under "config".
+	"vars": {
+		"CONFIG_KEY": "config"
+	}
+	// Optional: require an X-Client-Key header.
+	//   npx wrangler secret put CLIENT_KEY
+}

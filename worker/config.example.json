@@ -1,0 +1,7 @@
+{
+  "welcome_message": "Hello world!",
+  "max_items": 20,
+  "discount_ratio": 0.75,
+  "new_checkout_enabled": true,
+  "theme": { "primary": "#FFFFFF", "rounded": false }
+}
