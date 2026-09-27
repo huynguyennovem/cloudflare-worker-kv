@@ -3,7 +3,7 @@
 Shows remote config values, their source and the fetch status.
 
 It needs a deployed Worker (see the
-[`worker/` module](https://github.com/huynguyennovem/cloudflare-worker-kv-flutter/tree/main/worker)).
+[`worker/` module](https://github.com/huynguyennovem/cloudflare-worker-kv/tree/main/worker)).
 Pass its URL at build time:
 
 ```bash

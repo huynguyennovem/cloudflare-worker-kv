@@ -1,3 +1,8 @@
+## 0.1.1
+
+* Update repository and issue tracker URLs after the repository was
+  renamed to `cloudflare-worker-kv`.
+
 ## 0.1.0
 
 * Initial release.

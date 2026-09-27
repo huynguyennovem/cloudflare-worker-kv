@@ -23,7 +23,7 @@ Workers KV, then *Fetch & activate* picks up the new value.
 The package talks to a small read-only Cloudflare Worker, so your app never
 holds a Cloudflare API token. The Worker, and how to deploy it against your KV
 namespace, lives in the
-[`worker/` module](https://github.com/huynguyennovem/cloudflare-worker-kv-flutter/tree/main/worker)
+[`worker/` module](https://github.com/huynguyennovem/cloudflare-worker-kv/tree/main/worker)
 of this repository. Any backend that implements the [HTTP contract](#http-contract)
 works too.
 
@@ -95,7 +95,7 @@ See [`example/`](example/lib/main.dart) for a complete app.
 | `lastFetchTime`, `lastFetchStatus`, `settings` | same                                      |
 | `RemoteConfigValue`, `ValueSource`        | same                                           |
 | `FirebaseException`                       | `RemoteConfigException` (`code`, `statusCode`) |
-| `onConfigUpdated`                         | not yet (see roadmap)                          |
+| `onConfigUpdated`                         | not yet                         |
 | Conditions, A/B testing, personalization  | not supported                                  |
 
 ## Behaviour
