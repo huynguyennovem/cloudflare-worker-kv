@@ -1,0 +1,63 @@
+{
+  "name": "react-native-cloudflare-worker-kv",
+  "version": "0.1.0",
+  "description": "Remote config for React Native and Expo, backed by Cloudflare Workers KV: in-app defaults, fetch and activate, typed getters and an offline cache.",
+  "keywords": [
+    "react-native",
+    "expo",
+    "remote-config",
+    "feature-flags",
+    "cloudflare",
+    "cloudflare-workers",
+    "workers-kv",
+    "firebase-remote-config"
+  ],
+  "homepage": "https://github.com/huynguyennovem/cloudflare-worker-kv/tree/main/react-native#readme",
+  "bugs": {
+    "url": "https://github.com/huynguyennovem/cloudflare-worker-kv/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huynguyennovem/cloudflare-worker-kv.git",
+    "directory": "react-native"
+  },
+  "license": "MIT",
+  "author": "huynguyennovem",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "react-native": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json",
+    "test": "vitest run",
+    "check:package": "publint --strict && attw --pack . --profile esm-only",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run typecheck && npm test"
+  },
+  "peerDependencies": {
+    "@react-native-async-storage/async-storage": "^1.17.0 || ^2.0.0 || ^3.0.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@types/node": "^24.19.0",
+    "publint": "^0.3.24",
+    "tsdown": "~0.23.0",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
+  }
+}

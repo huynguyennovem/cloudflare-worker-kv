@@ -1,0 +1,26 @@
+{
+  // Type-checks the library sources. The build (tsdown) reads this file too:
+  // `isolatedDeclarations` lets it emit dist/index.d.ts with oxc.
+  "compilerOptions": {
+    // es2020 on purpose: Metro/Babel do not polyfill newer built-ins, so the
+    // library must not use e.g. AbortSignal.timeout, Promise.withResolvers,
+    // structuredClone, Error `cause`, Array#at or Object.hasOwn.
+    "target": "es2020",
+    "lib": ["es2020", "dom"],
+    "types": [],
+    "module": "preserve",
+    "moduleResolution": "bundler",
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "isolatedDeclarations": true,
+    "declaration": true,
+    "noEmit": true
+  },
+  "include": ["src"]
+}

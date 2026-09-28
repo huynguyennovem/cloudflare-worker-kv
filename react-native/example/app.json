@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Cloudflare Remote Config",
+    "slug": "react-native-cloudflare-worker-kv-example",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    }
+  }
+}

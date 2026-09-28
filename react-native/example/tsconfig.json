@@ -1,0 +1,12 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    // The library is not an npm dependency of the example: Metro resolves it
+    // from ../ (see metro.config.js), and TypeScript reads its built types.
+    // Run `npm run build` in ../ first.
+    "paths": {
+      "react-native-cloudflare-worker-kv": ["../dist/index.d.ts"]
+    }
+  }
+}

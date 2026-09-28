@@ -1,0 +1,11 @@
+{
+  // Type-checks the tests (with the sources they import) and the tool configs.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["es2023", "dom"],
+    "types": ["node"],
+    "isolatedDeclarations": false,
+    "declaration": false
+  },
+  "include": ["../src", ".", "../vitest.config.ts", "../tsdown.config.ts"]
+}
