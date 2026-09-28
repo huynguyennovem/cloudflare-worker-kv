@@ -9,6 +9,12 @@ Remote config for Flutter, backed by **Cloudflare Workers KV**.
 - Bandwidth-friendly: `ETag` / `304 Not Modified`
 - Works on Android, iOS, macOS, Windows, Linux and web
 
+Not using Flutter? The same remote config is available for
+[React Native](https://github.com/huynguyennovem/cloudflare-worker-kv/tree/main/react-native),
+[Android](https://github.com/huynguyennovem/cloudflare-worker-kv/tree/main/android) and
+[iOS](https://github.com/huynguyennovem/cloudflare-worker-kv/tree/main/ios), with the
+same behaviour.
+
 ## Demo
 
 ![The example app on iOS shows "Hello world, bro!" from Workers KV; after the value changes in KV, tapping "Fetch & activate" shows "Hello world!" and a "New config activated" message](doc/demo.gif)
@@ -30,7 +36,10 @@ works too.
 ## Getting started
 
 You need the URL of a deployed Worker, e.g.
-`https://my-config.<subdomain>.workers.dev`.
+`https://my-config.<subdomain>.workers.dev`: `npm run deploy` prints it, and
+the Cloudflare dashboard lists it under **Workers & Pages → your Worker →
+Settings → Domains & Routes**
+([details](https://github.com/huynguyennovem/cloudflare-worker-kv/blob/main/worker/README.md#find-the-worker-url)).
 
 ```yaml
 dependencies:
@@ -153,11 +162,17 @@ GET {endpoint}/v1/config?template={template}
   401/403 bad client key · 429 rate limited (Retry-After) · 5xx errors
 ```
 
+The full contract, including the client behaviour every SDK shares, is in
+[spec/README.md](https://github.com/huynguyennovem/cloudflare-worker-kv/blob/main/spec/README.md).
+
 ## Running the tests
 
 ```bash
 flutter test
 ```
+
+`test/conformance_test.dart` runs the fixtures shared by all SDKs from
+`../spec/fixtures`, so run the tests from a checkout of the whole repository.
 
 ## Roadmap
 

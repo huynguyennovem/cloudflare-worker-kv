@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 930 112" width="930" height="112" role="img" aria-labelledby="title desc">
   <title id="title">How it works</title>
-  <desc id="desc">The Flutter app sends GET /v1/config?template=default to the Cloudflare Worker. The Worker reads Workers KV, gets the value back, and replies to the app with 200 {version, entries} or 304.</desc>
+  <desc id="desc">Your app (Flutter, React Native, Android or iOS) sends GET /v1/config?template=default to the Cloudflare Worker. The Worker reads Workers KV, gets the value back, and replies to the app with 200 {version, entries} or 304.</desc>
   <style>
     .node-app { fill: #e8f1fe; stroke: #0969da; stroke-width: 1.5; }
     .node-cf { fill: #fff4e8; stroke: #f38020; stroke-width: 1.5; }
@@ -26,10 +26,11 @@
     </marker>
   </defs>
 
-  <!-- Flutter app -->
+  <!-- Your app -->
   <rect class="node-app" x="10" y="16" width="180" height="80" rx="10"/>
-  <text class="title" x="100" y="52">Flutter app</text>
-  <text class="sub" x="100" y="71">flutter/ module</text>
+  <text class="title" x="100" y="46">Your app</text>
+  <text class="sub" x="100" y="65">Flutter · React Native</text>
+  <text class="sub" x="100" y="81">Android · iOS</text>
 
   <!-- Cloudflare Worker -->
   <rect class="node-cf" x="470" y="16" width="180" height="80" rx="10"/>
@@ -42,12 +43,12 @@
   <text class="title" x="845" y="60">Workers KV</text>
   <text class="sub" x="845" y="79">Cloudflare</text>
 
-  <!-- Flutter app -> Worker: request -->
+  <!-- App -> Worker: request -->
   <path class="edge" d="M190 40 H468" marker-end="url(#arrow)"/>
   <rect class="pill" x="208" y="11" width="244" height="22" rx="11"/>
   <text class="label" x="330" y="26">GET /v1/config?template=default</text>
 
-  <!-- Worker -> Flutter app: response -->
+  <!-- Worker -> App: response -->
   <path class="edge dashed" d="M470 72 H192" marker-end="url(#arrow)"/>
   <rect class="pill" x="215" y="80" width="230" height="22" rx="11"/>
   <text class="label" x="330" y="95">200 {version, entries} or 304</text>
