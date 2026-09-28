@@ -1,0 +1,17 @@
+{
+  "description": "Building the request URL from the configured endpoint and template: append /v1/config to the endpoint path (removing one trailing slash), keep the scheme, host, port and query, set the template query parameter (replacing an existing one in place, otherwise appending it) and drop the fragment. Endpoints without a scheme and a host are rejected (error: true).",
+  "cases": [
+    { "endpoint": "https://a.dev", "template": "default", "expected": "https://a.dev/v1/config?template=default" },
+    { "endpoint": "https://a.dev/", "template": "default", "expected": "https://a.dev/v1/config?template=default" },
+    { "endpoint": "https://a.dev/api", "template": "default", "expected": "https://a.dev/api/v1/config?template=default" },
+    { "endpoint": "https://a.dev/api/?x=1#frag", "template": "staging", "expected": "https://a.dev/api/v1/config?x=1&template=staging" },
+    { "endpoint": "https://a.dev/?template=old&x=1", "template": "new", "expected": "https://a.dev/v1/config?template=new&x=1" },
+    { "endpoint": "https://config.example.com:8443", "template": "d", "expected": "https://config.example.com:8443/v1/config?template=d" },
+    { "endpoint": "http://localhost:8787", "template": "prod_v2", "expected": "http://localhost:8787/v1/config?template=prod_v2" },
+    { "endpoint": "https://my-config.team.workers.dev/edge/cfg/", "template": "A-b_9", "expected": "https://my-config.team.workers.dev/edge/cfg/v1/config?template=A-b_9" },
+    { "endpoint": "/config", "template": "d", "error": true },
+    { "endpoint": "a.dev/config", "template": "d", "error": true },
+    { "endpoint": "mailto:someone@example.com", "template": "d", "error": true },
+    { "endpoint": "https://", "template": "d", "error": true }
+  ]
+}

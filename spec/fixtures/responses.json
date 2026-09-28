@@ -1,0 +1,391 @@
+{
+  "description": "How a client maps one HTTP response to a fetch outcome. sentEtag is the If-None-Match value sent with the request (null: none). Header names are case-insensitive. expect.result is 'fetched' (version, etag = response ETag verbatim or null, entries) or 'notModified'; otherwise expect.error is the error code with statusCode, and throttleSeconds (throttle end = request clock + seconds) or messageContains when given.",
+  "cases": [
+    {
+      "name": "200 with version and ETag",
+      "sentEtag": "\"v0\"",
+      "status": 200,
+      "headers": {
+        "ETag": "\"v1\"",
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      "body": "{\"version\":\"v1\",\"entries\":{\"a\":\"xin chào\",\"b\":\"2\"}}",
+      "expect": {
+        "result": "fetched",
+        "version": "v1",
+        "etag": "\"v1\"",
+        "entries": {
+          "a": "xin chào",
+          "b": "2"
+        }
+      }
+    },
+    {
+      "name": "200 without version falls back to a weak ETag",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {
+        "ETag": "W/\"abc\""
+      },
+      "body": "{\"entries\":{}}",
+      "expect": {
+        "result": "fetched",
+        "version": "abc",
+        "etag": "W/\"abc\"",
+        "entries": {}
+      }
+    },
+    {
+      "name": "200 with a non-string version falls back to the ETag",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {
+        "ETag": "\"e7\""
+      },
+      "body": "{\"version\":7,\"entries\":{\"k\":\"v\"}}",
+      "expect": {
+        "result": "fetched",
+        "version": "e7",
+        "etag": "\"e7\"",
+        "entries": {
+          "k": "v"
+        }
+      }
+    },
+    {
+      "name": "200 without version or ETag",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {},
+      "body": "{\"entries\":{\"k\":\"v\"}}",
+      "expect": {
+        "result": "fetched",
+        "version": "",
+        "etag": null,
+        "entries": {
+          "k": "v"
+        }
+      }
+    },
+    {
+      "name": "200 normalises non-string entry values",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {
+        "ETag": "\"v\""
+      },
+      "body": "{\"version\":\"v\",\"entries\":{\"s\":\"text\",\"i\":42,\"neg\":-3,\"t\":true,\"f\":false,\"o\":{\"k\":1},\"eo\":{},\"arr\":[1,\"two\",true],\"ea\":[],\"urls\":[\"https://x.dev/a\"],\"n\":null}}",
+      "expect": {
+        "result": "fetched",
+        "version": "v",
+        "etag": "\"v\"",
+        "entries": {
+          "s": "text",
+          "i": "42",
+          "neg": "-3",
+          "t": "true",
+          "f": "false",
+          "o": "{\"k\":1}",
+          "eo": "{}",
+          "arr": "[1,\"two\",true]",
+          "ea": "[]",
+          "urls": "[\"https://x.dev/a\"]"
+        }
+      }
+    },
+    {
+      "name": "200 with empty entries",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {
+        "ETag": "\"e\""
+      },
+      "body": "{\"version\":\"e\",\"entries\":{}}",
+      "expect": {
+        "result": "fetched",
+        "version": "e",
+        "etag": "\"e\"",
+        "entries": {}
+      }
+    },
+    {
+      "name": "200 ignores unknown top-level fields",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {
+        "ETag": "\"v\""
+      },
+      "body": "{\"version\":\"v\",\"entries\":{\"a\":\"1\"},\"extra\":true}",
+      "expect": {
+        "result": "fetched",
+        "version": "v",
+        "etag": "\"v\"",
+        "entries": {
+          "a": "1"
+        }
+      }
+    },
+    {
+      "name": "304 after sending an ETag",
+      "sentEtag": "\"v1\"",
+      "status": 304,
+      "headers": {
+        "ETag": "\"v1\""
+      },
+      "body": "",
+      "expect": {
+        "result": "notModified"
+      }
+    },
+    {
+      "name": "304 without sending an ETag",
+      "sentEtag": null,
+      "status": 304,
+      "headers": {},
+      "body": "",
+      "expect": {
+        "error": "invalid-response",
+        "statusCode": 304
+      }
+    },
+    {
+      "name": "malformed 200 body #1: not json",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {},
+      "body": "not json",
+      "expect": {
+        "error": "invalid-response",
+        "statusCode": 200
+      }
+    },
+    {
+      "name": "malformed 200 body #2: (empty)",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {},
+      "body": "",
+      "expect": {
+        "error": "invalid-response",
+        "statusCode": 200
+      }
+    },
+    {
+      "name": "malformed 200 body #3: []",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {},
+      "body": "[]",
+      "expect": {
+        "error": "invalid-response",
+        "statusCode": 200
+      }
+    },
+    {
+      "name": "malformed 200 body #4: null",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {},
+      "body": "null",
+      "expect": {
+        "error": "invalid-response",
+        "statusCode": 200
+      }
+    },
+    {
+      "name": "malformed 200 body #5: {}",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {},
+      "body": "{}",
+      "expect": {
+        "error": "invalid-response",
+        "statusCode": 200
+      }
+    },
+    {
+      "name": "malformed 200 body #6: {\"entries\":[]}",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {},
+      "body": "{\"entries\":[]}",
+      "expect": {
+        "error": "invalid-response",
+        "statusCode": 200
+      }
+    },
+    {
+      "name": "malformed 200 body #7: {\"entries\":\"nope\"}",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {},
+      "body": "{\"entries\":\"nope\"}",
+      "expect": {
+        "error": "invalid-response",
+        "statusCode": 200
+      }
+    },
+    {
+      "name": "malformed 200 body #8: {\"version\":\"v\"}",
+      "sentEtag": null,
+      "status": 200,
+      "headers": {},
+      "body": "{\"version\":\"v\"}",
+      "expect": {
+        "error": "invalid-response",
+        "statusCode": 200
+      }
+    },
+    {
+      "name": "401 rejected client key",
+      "sentEtag": null,
+      "status": 401,
+      "headers": {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      "body": "{\"error\":\"unauthorized\",\"message\":\"Missing or invalid X-Client-Key.\"}",
+      "expect": {
+        "error": "unauthorized",
+        "statusCode": 401
+      }
+    },
+    {
+      "name": "403 from a proxy",
+      "sentEtag": null,
+      "status": 403,
+      "headers": {},
+      "body": "Forbidden",
+      "expect": {
+        "error": "unauthorized",
+        "statusCode": 403
+      }
+    },
+    {
+      "name": "429 with Retry-After seconds",
+      "sentEtag": null,
+      "status": 429,
+      "headers": {
+        "Retry-After": "120"
+      },
+      "body": "",
+      "expect": {
+        "error": "throttled",
+        "statusCode": 429,
+        "throttleSeconds": 120
+      }
+    },
+    {
+      "name": "429 with padded Retry-After",
+      "sentEtag": null,
+      "status": 429,
+      "headers": {
+        "Retry-After": " 30 "
+      },
+      "body": "",
+      "expect": {
+        "error": "throttled",
+        "statusCode": 429,
+        "throttleSeconds": 30
+      }
+    },
+    {
+      "name": "429 without Retry-After uses 60 seconds",
+      "sentEtag": null,
+      "status": 429,
+      "headers": {},
+      "body": "",
+      "expect": {
+        "error": "throttled",
+        "statusCode": 429,
+        "throttleSeconds": 60
+      }
+    },
+    {
+      "name": "429 with a non-numeric Retry-After uses 60 seconds",
+      "sentEtag": null,
+      "status": 429,
+      "headers": {
+        "Retry-After": "soon"
+      },
+      "body": "",
+      "expect": {
+        "error": "throttled",
+        "statusCode": 429,
+        "throttleSeconds": 60
+      }
+    },
+    {
+      "name": "429 with a negative Retry-After uses 60 seconds",
+      "sentEtag": null,
+      "status": 429,
+      "headers": {
+        "Retry-After": "-5"
+      },
+      "body": "",
+      "expect": {
+        "error": "throttled",
+        "statusCode": 429,
+        "throttleSeconds": 60
+      }
+    },
+    {
+      "name": "400 invalid template",
+      "sentEtag": null,
+      "status": 400,
+      "headers": {},
+      "body": "{\"error\":\"invalid_template\",\"message\":\"Template must match [A-Za-z0-9_-]{1,64}.\"}",
+      "expect": {
+        "error": "server-error",
+        "statusCode": 400,
+        "messageContains": "invalid_template"
+      }
+    },
+    {
+      "name": "404 unknown route",
+      "sentEtag": null,
+      "status": 404,
+      "headers": {},
+      "body": "{\"error\":\"not_found\",\"message\":\"Unknown route.\"}",
+      "expect": {
+        "error": "server-error",
+        "statusCode": 404,
+        "messageContains": "not_found"
+      }
+    },
+    {
+      "name": "500 invalid config",
+      "sentEtag": null,
+      "status": 500,
+      "headers": {},
+      "body": "{\"error\":\"invalid_config\",\"message\":\"bad\"}",
+      "expect": {
+        "error": "server-error",
+        "statusCode": 500,
+        "messageContains": "invalid_config"
+      }
+    },
+    {
+      "name": "502 with a non-JSON body",
+      "sentEtag": null,
+      "status": 502,
+      "headers": {},
+      "body": "<html>Bad gateway</html>",
+      "expect": {
+        "error": "server-error",
+        "statusCode": 502
+      }
+    },
+    {
+      "name": "503 KV unavailable",
+      "sentEtag": null,
+      "status": 503,
+      "headers": {},
+      "body": "{\"error\":\"kv_unavailable\",\"message\":\"Failed to read config from KV.\"}",
+      "expect": {
+        "error": "server-error",
+        "statusCode": 503,
+        "messageContains": "kv_unavailable"
+      }
+    }
+  ]
+}
