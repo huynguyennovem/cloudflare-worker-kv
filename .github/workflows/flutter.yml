@@ -1,0 +1,33 @@
+name: flutter
+
+on:
+  push:
+    branches: [main]
+    paths: ["flutter/**", "spec/**", ".github/workflows/flutter.yml"]
+  pull_request:
+    paths: ["flutter/**", "spec/**", ".github/workflows/flutter.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: flutter
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      # Includes test/conformance_test.dart, which runs ../spec/fixtures.
+      - run: flutter test

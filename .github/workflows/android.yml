@@ -1,0 +1,40 @@
+name: android
+
+on:
+  push:
+    branches: [main]
+    paths: ["android/**", "spec/**", ".github/workflows/android.yml"]
+  pull_request:
+    paths: ["android/**", "spec/**", ".github/workflows/android.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+      # Unit tests include the conformance tests, which run ../spec/fixtures.
+      # publishToMavenLocal is unsigned here: signing only runs when the
+      # signingInMemoryKey property is set (see RELEASING.md).
+      - run: >-
+          ./gradlew
+          :cloudflare-worker-kv:testDebugUnitTest
+          :cloudflare-worker-kv:lintDebug
+          :cloudflare-worker-kv:publishToMavenLocal
+          :example:assembleDebug
+          :example:assembleRelease

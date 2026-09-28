@@ -1,0 +1,61 @@
+name: react-native
+
+on:
+  push:
+    branches: [main]
+    paths: ["react-native/**", "spec/**", ".github/workflows/react-native.yml"]
+  pull_request:
+    paths: ["react-native/**", "spec/**", ".github/workflows/react-native.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  library:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: react-native
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: react-native/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      # Includes test/conformance.test.ts, which runs ../spec/fixtures.
+      - run: npm test
+      - run: npm run build
+      - run: npm run check:package
+      - run: npm pack --dry-run
+
+  example:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            react-native/package-lock.json
+            react-native/example/package-lock.json
+      - name: Build the library
+        working-directory: react-native
+        run: npm ci && npm run build
+      - name: Type-check and bundle the example
+        working-directory: react-native/example
+        env:
+          EXPO_PUBLIC_CF_CONFIG_ENDPOINT: https://example.invalid
+        run: |
+          npm ci
+          npx tsc --noEmit
+          npx expo export -p web -p ios --output-dir "$RUNNER_TEMP/expo-export"

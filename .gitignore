@@ -25,4 +25,14 @@ migrate_working_dir/
 # Private notes, not part of the repository.
 /docs/
 /wip-ai-converstation/
-# Module-specific rules live in flutter/.gitignore and worker/.gitignore.
+
+# Swift Package Manager / Xcode (Package.swift lives at the repository root).
+/.build/
+/.swiftpm/
+/Package.resolved
+xcuserdata/
+*.xcuserstate
+DerivedData/
+
+# Module-specific rules live in each module's own .gitignore
+# (flutter/, worker/, react-native/, android/, ios/).

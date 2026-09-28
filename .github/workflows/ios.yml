@@ -1,0 +1,45 @@
+name: ios
+
+on:
+  push:
+    branches: [main]
+    paths: ["Package.swift", "ios/**", "spec/**", ".github/workflows/ios.yml"]
+  pull_request:
+    paths: ["Package.swift", "ios/**", "spec/**", ".github/workflows/ios.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - run: sudo xcode-select -s /Applications/Xcode_26.6.app
+      - run: swift build -Xswiftc -warnings-as-errors
+      # Includes SharedFixtureTests, which runs spec/fixtures.
+      - run: swift test
+      - run: xcodebuild test -scheme CloudflareWorkerKV -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+      - name: Build for tvOS, watchOS and visionOS
+        run: |
+          for platform in tvOS watchOS visionOS; do
+            xcodebuild build -scheme CloudflareWorkerKV -destination "generic/platform=$platform Simulator"
+          done
+
+  example:
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - run: sudo xcode-select -s /Applications/Xcode_26.6.app
+      - run: >-
+          xcodebuild build
+          -project ios/Example/CloudflareWorkerKVExample.xcodeproj
+          -scheme CloudflareWorkerKVExample
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO
