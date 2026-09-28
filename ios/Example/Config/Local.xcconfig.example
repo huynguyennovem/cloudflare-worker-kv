@@ -1,0 +1,12 @@
+// Copy this file to Local.xcconfig (ignored by Git) and set your Worker URL.
+//
+// In .xcconfig files `//` starts a comment, even inside a value, so
+// `https://example.com` would be cut down to `https:`. Write the `//` of a URL
+// as `/$()/` (an empty variable between the two slashes):
+CF_CONFIG_ENDPOINT = https:/$()/my-config.<subdomain>.workers.dev
+
+// For `npx wrangler dev` running on this Mac, from the iOS Simulator:
+// CF_CONFIG_ENDPOINT = http:/$()/localhost:8787
+
+// Only needed when the Worker sets CLIENT_KEY:
+CF_CLIENT_KEY =

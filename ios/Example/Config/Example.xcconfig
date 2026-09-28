@@ -1,0 +1,14 @@
+// Build settings of the example app, injected into Info.plist.
+//
+// Do not put your Worker URL here: copy Local.xcconfig.example to
+// Local.xcconfig (ignored by Git), or pass the settings to xcodebuild:
+//
+//   xcodebuild ... CF_CONFIG_ENDPOINT=https://my-config.<subdomain>.workers.dev
+
+// Base URL of the Worker. Empty: the app explains how to set it.
+CF_CONFIG_ENDPOINT =
+
+// Only needed when the Worker sets CLIENT_KEY.
+CF_CLIENT_KEY =
+
+#include? "Local.xcconfig"

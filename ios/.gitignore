@@ -1,0 +1,4 @@
+# Private settings of the example app (Worker URL, client key).
+Example/Config/Local.xcconfig
+# `xcodebuild -derivedDataPath Example/build`
+Example/build/
