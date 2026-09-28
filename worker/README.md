@@ -1,10 +1,13 @@
 # Remote config Worker
 
 A Cloudflare Worker that reads config from a Workers KV namespace and serves
-it, read-only, to the [`cloudflare_worker_kv`](../flutter/README.md) Flutter
-package. It works with a new namespace or one you already have, with data in
-your own layout. Why the app goes through a Worker instead of reading KV
-directly: see the [FAQ](../README.md#why-not-read-workers-kv-directly-from-flutter).
+it, read-only, to the client SDKs of this repository
+([Flutter](../flutter/README.md), [React Native](../react-native/README.md),
+[Android](../android/README.md), [iOS](../ios/README.md)) or any other client
+of the [HTTP contract](../spec/README.md). It works with a new namespace or
+one you already have, with data in your own layout. Why the app goes through a
+Worker instead of reading KV directly: see the
+[FAQ](../README.md#why-not-read-workers-kv-directly-from-the-app).
 
 - [1. Before you start](#1-before-you-start)
 - [2. Describe your data](#2-describe-your-data)
@@ -47,6 +50,10 @@ matter, and other Workers may bind the same namespace under other names.
 No variables needed. Store one JSON object per template under
 `config:<template>`, e.g. `config:default` (see [§6](#6-publishing-and-updating-data)).
 
+The `wrangler.jsonc` in this repository sets `CONFIG_KEY` to `config`, so as
+shipped, the Worker reads the key `config` for every template. Remove that
+variable to use the default.
+
 ### One key holds a JSON object → `json` layout
 
 ```
@@ -58,7 +65,8 @@ app-config   {"welcome_message": "Hello", "max_items": 20, "beta": true}
 | `CONFIG_KEY` | `app-config` |
 
 Per-environment keys such as `app-config-prod` / `app-config-staging`: set
-`CONFIG_KEY=app-config-{template}` and pass `template: 'prod'` in Flutter.
+`CONFIG_KEY=app-config-{template}` and set the template to `prod` in the app
+SDK.
 
 ### One key per parameter → `keys` layout
 
@@ -172,6 +180,33 @@ Things to know:
 
 ## 5. Verify
 
+### Find the Worker URL
+
+The SDKs call this URL the **endpoint**. The examples read it from
+`CF_CONFIG_ENDPOINT` (Flutter, Android, iOS) or `EXPO_PUBLIC_CF_CONFIG_ENDPOINT`
+(React Native). Get it in one of two ways:
+
+- **From the deploy output.** `npm run deploy` prints it after the upload:
+
+  ```
+  Deployed cloudflare-worker-kv-config triggers (0.35 sec)
+    https://cloudflare-worker-kv-config.<subdomain>.workers.dev
+  ```
+
+  The first part is the `name` in `wrangler.jsonc`; `<subdomain>` is your
+  account's `workers.dev` subdomain. If the account has none yet, the first
+  deploy asks you to register one.
+- **From the dashboard.** Open **Workers & Pages**, select the Worker, then
+  **Settings → Domains & Routes**. The `workers.dev` entry is the same URL. A
+  custom domain listed there (`https://config.example.com`) works too.
+
+Use the base URL only, such as `https://<worker>.<subdomain>.workers.dev`.
+Leave out `/v1/config`: the SDKs append it, so an endpoint that already
+ends in `/v1/config` gets `404 not_found`. With `"workers_dev": false` (see
+§4) there is no `workers.dev` URL; use a custom domain instead.
+
+### Check it
+
 ```bash
 curl -i -H "X-Client-Key: <key>" "https://<worker>.<subdomain>.workers.dev/v1/config"
 curl -i -H "X-Client-Key: <key>" "https://<worker>.<subdomain>.workers.dev/v1/config?template=staging"
@@ -179,8 +214,8 @@ curl -i -H "X-Client-Key: <key>" "https://<worker>.<subdomain>.workers.dev/v1/co
 
 Omit the header when `CLIENT_KEY` is not set. Expect `200` with your
 parameters in `entries`. Resending the returned `ETag` as `If-None-Match`
-gives `304`. Then point the Flutter package at the Worker URL (see
-[its README](../flutter/README.md#getting-started)).
+gives `304`. Then point your app's SDK at the Worker URL (see
+[Use it in your app](../README.md#getting-started)).
 
 ## 6. Publishing and updating data
 
@@ -202,12 +237,18 @@ namespace → *KV Pairs* → add an entry or edit the value.
 push it back. The push script checks that the file is a JSON object before
 writing.
 
+It writes to the key the Worker reads: `CONFIG_KEY` from `wrangler.jsonc`
+with `{template}` replaced, or `config:<template>` when `CONFIG_KEY` is not
+set. With this repository's `wrangler.jsonc`, that is `config`. Pass `--key`
+when `CONFIG_KEY` is set in the dashboard instead of `wrangler.jsonc`.
+
 ```bash
-npx wrangler kv key get config:default --binding CONFIG_KV --remote > config.local.json
+npm run config:push -- config.local.json --dry-run            # prints the key, writes nothing
+npx wrangler kv key get <key> --binding CONFIG_KV --remote > config.local.json
 # edit config.local.json
-npm run config:push -- config.local.json                      # -> config:default
-npm run config:push -- staging.local.json --template staging  # -> config:staging
-npm run config:push -- config.local.json --key app-config     # custom CONFIG_KEY
+npm run config:push -- config.local.json                      # -> the key the Worker reads
+npm run config:push -- staging.local.json --template staging  # -> that key for template "staging"
+npm run config:push -- config.local.json --key app-config     # -> any other key
 ```
 
 `*.local.json` files are git-ignored. For a new namespace, start from
@@ -276,8 +317,9 @@ The Worker page (*Workers & Pages* → your Worker) has the tabs *Overview*,
 
 | Symptom | Likely cause |
 | --- | --- |
-| Updates take a while to show | See [freshness](#8-costs-limits-and-freshness); use `minimumFetchInterval: Duration.zero` while testing. |
+| Updates take a while to show | See [freshness](#8-costs-limits-and-freshness); set the SDK's `minimumFetchInterval` to zero while testing. |
 | Written with `wrangler kv key put` but not visible | Missing `--remote`; the write went to a local copy. |
+| Pushed new values, but the Worker still returns the old ones | The write went to a key the Worker doesn't read, e.g. `config:default` while `CONFIG_KEY` is `config`. `npx wrangler kv key list --binding CONFIG_KV --remote` lists the keys; `npm run config:push -- <file> --dry-run` shows the key the Worker reads. Push again, then delete the stray key. |
 | `200` with empty `entries` | No key matches: wrong `CONFIG_KEY` / `KEY_PREFIX` / template, or the binding points at another namespace. With no variables set, the Worker reads `config:default`. |
 | `401 unauthorized` | `CLIENT_KEY` is set and the `X-Client-Key` header is missing or different. |
 | `500 worker_misconfigured` | Invalid variable value; the message says which. |
@@ -305,7 +347,9 @@ The Worker page (*Workers & Pages* → your Worker) has the tabs *Overview*,
 | 503 | KV read failed |
 
 A missing template returns `200` with empty `entries`. Responses carry CORS
-headers, so Flutter web works without extra setup.
+headers, so web apps (Flutter web, React Native web) work without extra
+setup. The full contract, including how clients handle each status, is in
+[spec/README.md](../spec/README.md).
 
 ## 11. Development
 

@@ -4,7 +4,7 @@
  * Kept separate from the entry module because workerd treats every named
  * export of the entry module as an entrypoint and rejects non-handler values.
  *
- * HTTP contract (consumed by the `cloudflare_worker_kv` Flutter package):
+ * HTTP contract (consumed by the client SDKs; see spec/README.md):
  *
  *   GET /v1/config?template=<name>
  *     Headers (optional): X-Client-Key, If-None-Match

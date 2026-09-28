@@ -2,7 +2,7 @@
   "name": "cloudflare-worker-kv-config",
   "version": "0.1.0",
   "private": true,
-  "description": "Cloudflare Worker serving remote config from Workers KV for the cloudflare_worker_kv Flutter package.",
+  "description": "Cloudflare Worker serving remote config from Workers KV to the cloudflare-worker-kv client SDKs (Flutter, React Native, Android, iOS).",
   "type": "module",
   "scripts": {
     "deploy": "wrangler deploy",
