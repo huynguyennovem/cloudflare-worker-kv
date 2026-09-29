@@ -29,7 +29,8 @@ shared test fixtures.
 You need the URL of a deployed Worker, e.g.
 `https://my-config.<subdomain>.workers.dev`.
 
-The library is published to Maven Central:
+The library is published to
+[Maven Central](https://central.sonatype.com/artifact/io.github.huynguyennovem/cloudflare-worker-kv):
 
 ```kotlin
 // build.gradle.kts

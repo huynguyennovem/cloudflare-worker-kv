@@ -8,9 +8,9 @@ This repository holds independent modules:
 | Module | What it is | Docs |
 | --- | --- | --- |
 | [`worker/`](worker/) | The Cloudflare Worker that reads remote KV and serves it over HTTP | [worker/README.md](worker/README.md) |
-| [`flutter/`](flutter/) | The `cloudflare_worker_kv` Flutter package (pub.dev) | [flutter/README.md](flutter/README.md) |
-| [`react-native/`](react-native/) | The `react-native-cloudflare-worker-kv` package for React Native and Expo (npm) | [react-native/README.md](react-native/README.md) |
-| [`android/`](android/) | The `io.github.huynguyennovem:cloudflare-worker-kv` Kotlin library (Maven Central) | [android/README.md](android/README.md) |
+| [`flutter/`](flutter/) | The `cloudflare_worker_kv` Flutter package ([pub.dev](https://pub.dev/packages/cloudflare_worker_kv)) | [flutter/README.md](flutter/README.md) |
+| [`react-native/`](react-native/) | The `react-native-cloudflare-worker-kv` package for React Native and Expo ([npm](https://www.npmjs.com/package/react-native-cloudflare-worker-kv)) | [react-native/README.md](react-native/README.md) |
+| [`android/`](android/) | The `io.github.huynguyennovem:cloudflare-worker-kv` Kotlin library ([Maven Central](https://central.sonatype.com/artifact/io.github.huynguyennovem/cloudflare-worker-kv)) | [android/README.md](android/README.md) |
 | [`ios/`](ios/) | The `CloudflareWorkerKV` Swift package (Swift Package Manager) | [ios/README.md](ios/README.md) |
 | [`spec/`](spec/) | The HTTP contract and client behaviour shared by all of them, with test fixtures | [spec/README.md](spec/README.md) |
 

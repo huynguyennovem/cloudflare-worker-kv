@@ -120,6 +120,12 @@ One-time setup:
    the passphrase it had when you exported it. So after `gpg --passwd`,
    replace the `signingInMemoryKey` line by exporting again.
 
+   Gradle reads `gradle.properties` as ISO-8859-1 and treats `\` as an
+   escape character. So a passphrase with accented letters (`mật khẩu`
+   becomes `máº­t kháº©u`) or a backslash (`a\b` becomes `ab`) arrives
+   changed. Trailing spaces count as part of the value. Use an ASCII
+   passphrase without backslashes.
+
    In CI, use environment variables instead
    (`ORG_GRADLE_PROJECT_mavenCentralUsername` and so on). There the key can
    keep its normal line breaks.
